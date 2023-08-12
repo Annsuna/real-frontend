@@ -1,25 +1,59 @@
 import logo from './logo.svg';
 import './App.css';
+import Header from './components/Header';
+import House from './components/House';
+import SearchFilter from './components/SearchFilter';
+import { useEffect, useState } from 'react';
+import {Routes,Route} from 'react-router-dom';
+import SearchedHouse from './components/SearchedHouse';
+import SearchResults from './components/SearchResults';
+import axios from 'axios';
+import Login from './components/Login';
+import InquiryList from './components/InquiryList';
+import SignUp from './components/SignUp';
+
 
 function App() {
+  let [allHouses, setAllHouses] = useState([])
+  useEffect(() => {
+    async function getHousesInfo(){
+      // let resp = await fetch('houses.json')
+      //let resp = await axios.get('http://localhost:3002/');
+      //console.log(process.env.REACT_APP_LINKTOBACKEND +'/race');
+      let response = await axios.get(process.env.REACT_APP_LINKTOBACKEND);
+      //console.log(resp);
+      let data = await response.data;
+      setAllHouses(data)
+    }// catch (error) {
+     // console.error(error);
+    //}
+
+    getHousesInfo()
+  },[])
+
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App bg-secondary">    
+     <Header/>
+     <SearchFilter houses={allHouses}/>
+   
+    <Routes>
+          <Route path ="/" element={<House houses={allHouses}/>} />
+          <Route path="searchresults/:county" element={<SearchResults houses={allHouses}/>} />
+          <Route path="searchedhouse/:id" element={<SearchedHouse houses={allHouses}/>} />
+         
+          <Route path="login" element={<Login/>} />
+          <Route path="inquiries" element={<InquiryList/>} />      
+          <Route path="signup" element={<SignUp/>} />   
+
+    </Routes>
+
+
     </div>
   );
 }
+
 
 export default App;
